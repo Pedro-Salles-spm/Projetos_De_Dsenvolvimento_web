@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Domflix</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#ff0000">
+<meta name="description" content="Baixe vídeos do YouTube com facilidade">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Domflix">
+<meta name="msapplication-TileColor" content="#ff0000">
+<meta name="msapplication-tap-highlight" content="no">
+<link rel="manifest" href="/manifest.json">
+<link rel="icon" href="/icons/icon-192x192.png" sizes="192x192">
+<link rel="icon" href="/icons/icon-512x512.png" sizes="512x512">
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background-image: url('static/img.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 40px 20px;
+    position: relative;
+    color: white;
+}
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 0;
+}
+.container {
+    position: relative;
+    z-index: 1;
+    max-width: 1000px;
+    width: 100%;
+    background: rgba(255,255,255,0.1);
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+}
+.info-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+    margin-top: 20px;
+    text-align: left;
+}
+.info-text { flex: 2; }
+.info-text p { margin: 10px 0; }
+.info-thumb { flex: 1; text-align: center; }
+.info-thumb video {
+    max-width: 100%;
+    border-radius: 8px;
+}
+input, button {
+    padding: 10px;
+    margin: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+button {
+    cursor: pointer;
+    background: #ff0000;
+    color: white;
+    border: none;
+    transition: background 0.3s;
+}
+button:hover { background: #cc0000; }
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 15px;
+}
+th, td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: center;
+    background: rgba(255,255,255,0.2);
+}
+th { background: rgba(0,0,0,0.3); }
+h1, h2, h3, p { color: white; }
+.btn {
+    padding: 8px 12px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    background: #ff0000;
+    color: white;
+    text-decoration: none;
+    transition: background 0.3s;
+}
+.btn:hover { background: #cc0000; }
+</style>
+</head>
+<body>
+<div class="container">
+    <h1>Domflix</h1>
+    <p>Baixe vídeos do YouTube com facilidade!</p>
+    <input type="text" id="url" placeholder="Cole o link do vídeo aqui" size="50">
+    <button onclick="getInfo()">Buscar Info</button>
+    <div class="info" id="info"></div>
+</div>
+
+<script>
+function formatNumber(num) {
+    return num.toLocaleString("pt-BR");
+}
+function formatDuration(seconds) {
+    const minutes = Math.floor(seconds / 60);
+    const sec = seconds % 60;
+    return `${minutes}m ${sec}s`;
+}
+
+function getResolution(stream) {
+    if (!stream) return 'N/A';
+    // tenta várias chaves possíveis
+    const keys = ['resolução', 'resolucao', 'resolution', 'resolution_label', 'quality_label'];
+    for (const k of keys) {
+        if (stream[k]) return stream[k];
+    }
+    // se vier height/width, monta string
+    const height = stream.height || stream.resolution_height || null;
+    if (height) return `${height}p`;
+    return 'N/A';
+}
+
+async function getInfo() {
+    const url = document.getElementById("url").value;
+    if (!url) return alert("Cole a URL do vídeo!");
+
+    try {
+        const res = await fetch(`/info?url=${encodeURIComponent(url)}`);
+        if (!res.ok) throw new Error("Erro ao buscar informações.");
+        const data = await res.json();
+
+        // Escolhe um stream com áudio para o preview
+        const previewStream = (data.streams || []).find(s => s.tem_audio) || data.streams[0] || null;
+
+        let html = `
+        <div class="info-section">
+            <div class="info-text">
+                <p><strong>Título:</strong> ${data.title}</p>
+                <p><strong>Canal:</strong> ${data.author}</p>
+                <p><strong>Duração:</strong> ${formatDuration(data.length)}</p>
+                <p><strong>Views:</strong> ${formatNumber(data.views)}</p>
+            </div>
+            <div class="info-thumb">`;
+
+        if(previewStream){
+            const previewSrc = `/download?inline=1&url=${encodeURIComponent(url)}&itag=${previewStream.itag}`;
+            html += `
+                <div style="position:relative;">
+                    <video id="previewVideo" src="${previewSrc}" autoplay muted loop playsinline style="max-width:100%; border-radius:8px;"></video>
+                    <div style="margin-top:8px; display:flex; gap:8px;">
+                        <button class="btn" id="btnUnmute">Ouvir áudio</button>
+                        <button class="btn" id="btnToggleControls">Mostrar controles</button>
+                    </div>
+                </div>`;
+        } else {
+            html += `<img src="${data.thumbnail}" alt="Thumbnail do vídeo">`;
+        }
+
+        html += `</div></div>
+        <h3 style="margin-top:20px;">Qualidades disponíveis:</h3>
+        <table>
+        <tr><th>Resolução</th><th>FPS</th><th>Tamanho (MB)</th><th>Baixe Aqui</th></tr>`;
+
+        data.streams.forEach(s => {
+            html += `
+            <tr>
+                <td>${getResolution(s)}</td>
+                <td>${s.fps}</td>
+                <td>${s.tamanho_MB}</td>
+                <td><a class="btn" href="/download?url=${encodeURIComponent(url)}&itag=${s.itag}">Baixar</a></td>
+            </tr>`;
+        });
+
+        html += `</table>`;
+        document.getElementById("info").innerHTML = html;
+
+        // Ligações dos botões de preview
+        const video = document.getElementById('previewVideo');
+        const btnUnmute = document.getElementById('btnUnmute');
+        const btnToggleControls = document.getElementById('btnToggleControls');
+        if (video && btnUnmute) {
+            btnUnmute.addEventListener('click', () => {
+                try {
+                    video.muted = false;
+                    video.volume = 1.0;
+                    video.play().catch(() => {});
+                } catch (_) {}
+            });
+        }
+        if (video && btnToggleControls) {
+            btnToggleControls.addEventListener('click', () => {
+                video.controls = !video.controls;
+                btnToggleControls.textContent = video.controls ? 'Ocultar controles' : 'Mostrar controles';
+            });
+        }
+
+        // Remove colunas "Áudio" e "Progressivo" caso existam
+        removeColumnsByHeader(["Áudio", "Progressivo"]);
+
+    } catch (err) {
+        document.getElementById("info").innerHTML = `<p style="color:red">${err.message}</p>`;
+    }
+}
+
+// Remove colunas pelo texto do cabeçalho (case-sensitive)
+function removeColumnsByHeader(headersToRemove) {
+    const table = document.querySelector('#info table');
+    if (!table) return;
+
+    const headerCells = Array.from(table.querySelectorAll('thead tr th, tr:first-child th'));
+    if (headerCells.length === 0) return;
+
+    const indexesToRemove = headerCells
+        .map((th, idx) => headersToRemove.includes(th.textContent.trim()) ? idx : -1)
+        .filter(idx => idx !== -1)
+        .sort((a, b) => b - a); // remover do fim para o início
+
+    if (indexesToRemove.length === 0) return;
+
+    const rows = Array.from(table.querySelectorAll('tr'));
+    rows.forEach(row => {
+        const cells = Array.from(row.children);
+        indexesToRemove.forEach(colIdx => {
+            if (cells[colIdx]) {
+                cells[colIdx].remove();
+            }
+        });
+    });
+}
+
+// Registro do Service Worker
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+            .then(registration => {
+                console.log('SW registrado com sucesso:', registration);
+                
+                // Verificar atualizações
+                registration.addEventListener('updatefound', () => {
+                    const newWorker = registration.installing;
+                    if (newWorker) {
+                        newWorker.addEventListener('statechange', () => {
+                            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                // Nova versão disponível
+                                if (confirm('Nova versão disponível! Recarregar a página?')) {
+                                    window.location.reload();
+                                }
+                            }
+                        });
+                    }
+                });
+            })
+            .catch(error => {
+                console.log('Falha no registro do SW:', error);
+            });
+    });
+}
+
+// Instalar PWA
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    
+    // Mostrar botão de instalação apenas se não estiver já instalado
+    if (!window.matchMedia('(display-mode: standalone)').matches) {
+        const installBtn = document.createElement('button');
+        installBtn.textContent = '📱 Instalar App';
+        installBtn.className = 'btn';
+        installBtn.style.marginTop = '10px';
+        installBtn.style.fontSize = '14px';
+        installBtn.onclick = () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('Usuário aceitou a instalação');
+                        installBtn.style.display = 'none';
+                    }
+                    deferredPrompt = null;
+                });
+            }
+        };
+        document.querySelector('.container').appendChild(installBtn);
+    }
+});
+
+// Detectar se já está instalado
+window.addEventListener('appinstalled', () => {
+    console.log('PWA foi instalado');
+    const installBtn = document.querySelector('button[onclick]');
+    if (installBtn) installBtn.style.display = 'none';
+});
+</script>
+
+<script>
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("/sw.js")
+    .then(() => console.log("Service Worker registrado com sucesso!"))
+    .catch((err) => console.error("Erro ao registrar Service Worker:", err));
+}
+</script>
+
+
+</body>
+</html>
