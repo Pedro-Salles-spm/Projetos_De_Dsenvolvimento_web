@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Cadastro</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body class="pagina-cadastro">
+    <nav>
+     <a href="index.html">Inicio</a> 
+     <a href="cursos.html">Cursos</a>  
+     <a href="Noticias.html">Noticias</a> 
+    <a href="contato.html">Contato</a>
+    </nav>
+
+<div class="card-form">
+
+    <h2>Cadastro no Curso</h2>
+
+    <form id="formCadastro">
+
+        <input type="text" id="curso" readonly>
+
+        <input type="text" placeholder="Nome completo" required>
+        <input type="text" placeholder="CPF" required>
+        <input type="email" placeholder="Email" required>
+
+        <div class="telefone">
+            <span>🇧🇷 +55</span>
+            <input type="tel" placeholder="(00) 00000-0000">
+        </div>
+
+        <button type="submit">Cadastrar</button>
+
+    </form>
+
+</div>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const curso = params.get("curso");
+document.getElementById("curso").value = curso;
+</script>
+
+</body>
+</html>

@@ -1,0 +1,263 @@
+/* RESET */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* BODY */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+}
+
+/* NAV */
+nav {
+    background: linear-gradient(90deg, #141e39, #243b55);
+    padding: 10px;
+    text-align: center;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    margin: 0 15px;
+    font-weight: bold;
+}
+
+nav a:hover {
+    color: #00c3ff;
+}
+
+/* TITULOS */
+h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+p {
+    text-align: center;
+    font-size: 18px;
+    margin-top: 10px;
+}
+
+.titulo {
+    margin-left: 20px;
+}
+
+/* CONTAINER (mantido igual) */
+.container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 20px;
+}
+
+/* CARDS */
+.card {
+    background: #f8f8f8;
+    width: 300px;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transition: 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.badge {
+    background: #ffd6d6;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    margin-bottom: 10px;
+}
+
+.badge.verde {
+    background: #d4f8d4;
+}
+
+.info {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.info span {
+    background: #eee;
+    padding: 5px 10px;
+    border-radius: 10px;
+    font-size: 12px;
+}
+
+.card h2 {
+    font-size: 20px;
+    margin: 10px 0;
+}
+
+/* BOTÃO DOS CARDS */
+.btn {
+    display: block;
+    margin-top: 15px;
+    padding: 10px;
+    text-align: center;
+    border-radius: 20px;
+    background: linear-gradient(90deg, #ff7e7e, #6a8cff);
+    color: white;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.btn:hover {
+    opacity: 0.9;
+}
+
+/* FORMULÁRIO (mantido simples, sem mexer no layout) */
+.card-form {
+    width: 350px;
+    padding: 25px;
+    border-radius: 20px;
+    background: #cfcbe6;
+}
+
+/* INPUTS */
+form input {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    border-radius: 10px;
+    border: none;
+}
+
+/* CAMPO CURSO */
+#curso {
+    background: #ddd;
+    font-weight: bold;
+}
+
+/* TELEFONE */
+.telefone {
+    display: flex;
+    align-items: center;
+    background: white;
+    border-radius: 10px;
+    padding: 5px;
+    margin: 8px 0;
+}
+
+.telefone span {
+    margin: 0 10px;
+}
+
+.telefone input {
+    border: none;
+    outline: none;
+    width: 100%;
+}
+
+/* BOTÃO FORM */
+button {
+    width: 100%;
+    padding: 15px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 30px;
+    background: #141e39;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.pagina-cadastro {
+    background: #e5e5e5;
+}
+
+/* cria um espaço abaixo do menu */
+.card-form {
+    margin: 50px auto; /* centraliza horizontalmente */
+    width: 350px;
+}
+
+
+/* CONTAINER DAS NOTÍCIAS */
+.container-noticias {
+    max-width: 800px;
+    margin: 30px auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* CARD DE NOTÍCIA */
+.noticia {
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+/* TITULO DA NOTÍCIA */
+.noticia h2 {
+    margin-bottom: 10px;
+    color: #141e39;
+}
+
+/* TEXTO */
+.noticia p {
+    font-size: 16px;
+    line-height: 1.6;
+    text-align: left;
+}
+
+/* HERO */
+.hero {
+    text-align: center;
+    padding: 100px 20px;
+    background: linear-gradient(120deg, #141e30, #243b55);
+    color: white;
+}
+
+.hero h1 {
+    font-size: 32px;
+    margin-bottom: 15px;
+    color: white;
+}
+
+.hero p {
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+
+/* BOTÃO */
+.btn-home {
+    display: inline-block;
+    padding: 15px 25px;
+    border-radius: 30px;
+    background: linear-gradient(90deg, #ff7e7e, #6a8cff);
+    color: white;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+/* BENEFÍCIOS */
+.beneficios {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding: 40px;
+    flex-wrap: wrap;
+}
+
+.beneficio {
+    background: white;
+    width: 250px;
+    padding: 20px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
