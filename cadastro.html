@@ -12,6 +12,7 @@
      <a href="cursos.html">Cursos</a>  
      <a href="Noticias.html">Noticias</a> 
     <a href="contato.html">Contato</a>
+    <a href="alunos.html">Alunos</a>
     </nav>
 
 <div class="card-form">
@@ -22,13 +23,13 @@
 
         <input type="text" id="curso" readonly>
 
-        <input type="text" placeholder="Nome completo" required>
-        <input type="text" placeholder="CPF" required>
-        <input type="email" placeholder="Email" required>
+        <input type="text" id="nome" placeholder="Nome completo" required>
+        <input type="text" id="cpf" placeholder="CPF" required>
+        <input type="email" id="email" placeholder="Email" required>
 
         <div class="telefone">
             <span>🇧🇷 +55</span>
-            <input type="tel" placeholder="(00) 00000-0000">
+            <input type="tel" id="telefone" placeholder="(00) 00000-0000">
         </div>
 
         <button type="submit">Cadastrar</button>
@@ -41,6 +42,28 @@
 const params = new URLSearchParams(window.location.search);
 const curso = params.get("curso");
 document.getElementById("curso").value = curso;
+
+document.getElementById("formCadastro").addEventListener("submit", function(e){
+    e.preventDefault();
+
+    const aluno = {
+        curso: curso,
+        nome: document.getElementById("nome").value,
+        cpf: document.getElementById("cpf").value,
+        email: document.getElementById("email").value,
+        telefone: document.getElementById("telefone").value
+    };
+
+    let alunos = JSON.parse(localStorage.getItem("alunos")) || [];
+
+    alunos.push(aluno);
+
+    localStorage.setItem("alunos", JSON.stringify(alunos));
+
+    alert("Cadastro realizado com sucesso!");
+
+    window.location.href = "alunos.html";
+});
 </script>
 
 </body>

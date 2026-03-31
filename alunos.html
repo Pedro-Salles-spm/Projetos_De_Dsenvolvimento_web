@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Alunos Cadastrados</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<nav>
+<a href="index.html">Inicio</a>
+<a href="cursos.html">Cursos</a>
+<a href="noticias.html">Noticias</a>
+<a href="contato.html">Contato</a>
+</nav>
+
+<h1>Alunos Cadastrados</h1>
+
+<input type="text" id="busca" placeholder="Buscar aluno..." style="margin:20px; padding:10px; width:300px;">
+
+<div id="lista-alunos" class="container"></div>
+
+<script>
+let alunos = JSON.parse(localStorage.getItem("alunos")) || [];
+
+const lista = document.getElementById("lista-alunos");
+const busca = document.getElementById("busca");
+
+function renderizar(filtro="") {
+    lista.innerHTML = "";
+
+    alunos
+    .filter(aluno => aluno.nome.toLowerCase().includes(filtro.toLowerCase()))
+    .forEach((aluno, index) => {
+
+        const div = document.createElement("div");
+        div.classList.add("card");
+
+        div.innerHTML = `
+            <h2>${aluno.nome}</h2>
+            <p><strong>Curso:</strong> ${aluno.curso}</p>
+            <p><strong>CPF:</strong> ${aluno.cpf}</p>
+            <p><strong>Email:</strong> ${aluno.email}</p>
+            <p><strong>Telefone:</strong> ${aluno.telefone}</p>
+
+            <button onclick="editar(${index})">Editar</button>
+            <button onclick="excluir(${index})" style="background:red;">Excluir</button>
+        `;
+
+        lista.appendChild(div);
+    });
+}
+
+/* BUSCAR */
+busca.addEventListener("input", () => {
+    renderizar(busca.value);
+});
+
+/* EXCLUIR */
+function excluir(index){
+    if(confirm("Deseja excluir este aluno?")){
+        alunos.splice(index, 1);
+        localStorage.setItem("alunos", JSON.stringify(alunos));
+        renderizar();
+    }
+}
+
+/* EDITAR */
+function editar(index){
+    const aluno = alunos[index];
+
+    const nome = prompt("Nome:", aluno.nome);
+    const cpf = prompt("CPF:", aluno.cpf);
+    const email = prompt("Email:", aluno.email);
+    const telefone = prompt("Telefone:", aluno.telefone);
+
+    if(nome && cpf && email){
+        alunos[index] = {
+            ...aluno,
+            nome,
+            cpf,
+            email,
+            telefone
+        };
+
+        localStorage.setItem("alunos", JSON.stringify(alunos));
+        renderizar();
+    }
+}
+
+/* carregar inicial */
+renderizar();
+</script>
+
+</body>
+</html>
